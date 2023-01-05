@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import discord
 from discord.ext import commands
 
@@ -21,7 +19,9 @@ class Simple(discord.ui.View):
     InitialPage: int
         Page to start the pagination on.
     AllowExtInput: bool
-        Overrides ability for 3rd party to interract with button.
+        Overrides ability for 3rd party to interact with button.
+    DeleteOnTimeout: bool
+        Deletes the paginator when timeout occurs if set to True.
     """
 
     def __init__(self, *,
@@ -29,13 +29,17 @@ class Simple(discord.ui.View):
                  PreviousButton: discord.ui.Button = discord.ui.Button(emoji=discord.PartialEmoji(name="\U000025c0")),
                  NextButton: discord.ui.Button = discord.ui.Button(emoji=discord.PartialEmoji(name="\U000025b6")),
                  PageCounterStyle: discord.ButtonStyle = discord.ButtonStyle.grey,
-                 InitialPage: int = 0, AllowExtInput: bool = False,
+                 InitialPage: int = 0, 
+                 AllowExtInput: bool = False,
+                 DeleteOnTimeout: bool = False,
                  ephemeral: bool = False) -> None:
+
         self.PreviousButton = PreviousButton
         self.NextButton = NextButton
         self.PageCounterStyle = PageCounterStyle
         self.InitialPage = InitialPage
         self.AllowExtInput = AllowExtInput
+        self.DeleteOnTimeout = DeleteOnTimeout
         self.ephemeral = ephemeral
         
         self.pages = None
@@ -47,8 +51,8 @@ class Simple(discord.ui.View):
 
         super().__init__(timeout=timeout)
 
+
     async def start(self, ctx: discord.Interaction|commands.Context, pages: list[discord.Embed]):
-        
         if isinstance(ctx, discord.Interaction):
             ctx = await commands.Context.from_interaction(ctx)
 
@@ -70,6 +74,7 @@ class Simple(discord.ui.View):
 
         self.message = await ctx.send(embed=self.pages[self.InitialPage], view=self, ephemeral=self.ephemeral)
 
+
     async def previous(self):
         if self.current_page == 0:
             self.current_page = self.total_page_count - 1
@@ -78,6 +83,7 @@ class Simple(discord.ui.View):
 
         self.page_counter.label = f"{self.current_page + 1}/{self.total_page_count}"
         await self.message.edit(embed=self.pages[self.current_page], view=self)
+
 
     async def next(self):
         if self.current_page == self.total_page_count - 1:
@@ -88,6 +94,7 @@ class Simple(discord.ui.View):
         self.page_counter.label = f"{self.current_page + 1}/{self.total_page_count}"
         await self.message.edit(embed=self.pages[self.current_page], view=self)
 
+
     async def next_button_callback(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author and self.AllowExtInput:
             embed = discord.Embed(description="You cannot control this pagination because you did not execute it.",
@@ -95,6 +102,7 @@ class Simple(discord.ui.View):
             return await interaction.response.send_message(embed=embed, ephemeral=True)
         await self.next()
         await interaction.response.defer()
+
 
     async def previous_button_callback(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author and self.AllowExtInput:
@@ -104,6 +112,11 @@ class Simple(discord.ui.View):
         await self.previous()
         await interaction.response.defer()
 
+
+    # Override default implementation in discord.ui.View
+    async def on_timeout(self) -> None:
+        if self.DeleteOnTimeout == True:
+            await self.message.delete()
 
 
 class SimplePaginatorPageCounter(discord.ui.Button):
