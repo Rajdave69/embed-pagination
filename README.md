@@ -1,22 +1,27 @@
-# discord.py-pagination
+# embed-pagination
 
-#### discord.py-pagination is a Python library to easily create embed paginators.
+## Notes
+This project is a fork of an inactive repository at https://github.com/soosBot-com/Pagination<br>
+Credit is due to the contributors of the original project.
 
-<img src="https://cdn.soosbot.com/images/pagination-requirement.svg" alt="WARNING IMAGE NOT FOUND">
 
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the library.
 
 ```bash
-pip install discord.py-pagination
+pip install git+https://github.com/FaddyManatee/embed-pagination
 ```
 
 ## Usage
 
+> **Important:**
+> discord.py master, or a form that has discord.ui.View is required to use this library!
+
+
 ### Quickstart
 ```python
-import Paginator
+import paginator
 
 # Create a list of embeds to paginate.
 embeds = [discord.Embed(title="First embed"),
@@ -24,8 +29,11 @@ embeds = [discord.Embed(title="First embed"),
           discord.Embed(title="Third embed")]
 
 ... # Inside a command.
-await Paginator.Simple().start(ctx, pages=embeds)
+await paginator.Simple().start(ctx, pages=embeds)
 ```
+
+> **Hint:**
+> The `ctx` parameter is of type `discord.Interaction`
 
 ### Advanced
 
@@ -36,22 +44,23 @@ await Paginator.Simple().start(ctx, pages=embeds)
 
 PreviousButton = discord.ui.Button(...)
 NextButton = discord.ui.Button(...)
-PageCounterStyle = discord.ButtonStyle(...) # Only accepts ButtonStyle instead of Button
+PageCounterStyle = discord.ButtonStyle(...) # Only accepts discord.ButtonStyle
 InitialPage = 0 # Page to start the paginator on.
-timeout = 42069 # Seconds to timeout. Default is 60
-ephemeral = true # Defaults to false if not passed in.
+DeleteOnTimeout = True # Delete paginator message on timeout. Default is False.
+timeout = 400 # Seconds to timeout. Default is 60.
+ephemeral = True # Defaults to False if not passed in.
 
-await Paginator.Simple(
+await paginator.Simple(
     PreviousButton=PreviousButton,
     NextButton=NextButton,
     PageCounterStyle=PageCounterStyle,
     InitialPage=InitialPage,
-    timeout=timeout, ephemeral=ephemeral).start(ctx, pages=embeds)
+    DeleteOnTimeout=DeleteOnTimeout,
+    timeout=timeout,
+    ephemeral=ephemeral).start(ctx, pages=embeds)
 ```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
