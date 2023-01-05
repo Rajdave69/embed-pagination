@@ -4,6 +4,9 @@
 This project is a fork of an inactive repository at https://github.com/soosBot-com/Pagination<br>
 Credit is due to the contributors of the original project.
 
+## New features 💡
+* Added an option to delete paginator message upon timeout.
+
 
 ## Installation
 
