@@ -5,7 +5,10 @@ This project is a fork of an inactive repository at https://github.com/soosBot-c
 Credit is due to the contributors of the original project.
 
 ## New features 💡
-* Added an option to delete paginator message upon timeout.
+* Added new on_timeout options
+* Added buttons for first/last page
+* Improved button layout
+* Many more general improvements
 
 
 ## Installation
@@ -13,7 +16,7 @@ Credit is due to the contributors of the original project.
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the library.
 
 ```bash
-pip install git+https://github.com/FaddyManatee/embed-pagination
+pip install simple-embed-pagination
 ```
 
 ## Usage
@@ -49,18 +52,25 @@ PreviousButton = discord.ui.Button(...)
 NextButton = discord.ui.Button(...)
 PageCounterStyle = discord.ButtonStyle(...) # Only accepts discord.ButtonStyle
 InitialPage = 0 # Page to start the paginator on.
-DeleteOnTimeout = True # Delete paginator message on timeout. Default is False.
+OnTimeout = 'disable_view' # Delete paginator message on timeout. Default is False.
 timeout = 400 # Seconds to timeout. Default is 60.
 ephemeral = True # Defaults to False if not passed in.
+FirstButton = discord.ui.Button(...)
+LastButton = discord.ui.Button(...)
 
 await paginator.Simple(
-    PreviousButton=PreviousButton,
-    NextButton=NextButton,
-    PageCounterStyle=PageCounterStyle,
-    InitialPage=InitialPage,
-    DeleteOnTimeout=DeleteOnTimeout,
+    previous_button=">",
+    next_buttom=NextButton,
+    page_counter_style=PageCounterStyle,
+    initial_page=InitialPage,
+    allow_ext_input=True,
+    on_timeout=DeleteOnTimeout,
     timeout=timeout,
-    ephemeral=ephemeral).start(ctx, pages=embeds)
+    ephemeral=ephemeral,
+    first_button=FirstButton,
+    last_button=LastButton
+    
+).start(ctx, pages=embeds)
 ```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
